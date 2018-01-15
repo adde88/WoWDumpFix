@@ -1244,8 +1244,8 @@ typedef struct _IMAGEHLP_MODULE64
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_MODULE64)
     DWORD64  BaseOfImage;            // base load address of module
     DWORD    ImageSize;              // virtual size of the loaded module
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
-    DWORD    CheckSum;               // checksum from the pe header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
+    DWORD    CheckSum;               // checksum from the PE header
     DWORD    NumSyms;                // number of symbols in the symbol table
     SYM_TYPE SymType;                // type of symbols loaded
     CHAR     ModuleName[32];         // module name
@@ -1273,8 +1273,8 @@ typedef struct _IMAGEHLP_MODULEW64
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_MODULE64)
     DWORD64  BaseOfImage;            // base load address of module
     DWORD    ImageSize;              // virtual size of the loaded module
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
-    DWORD    CheckSum;               // checksum from the pe header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
+    DWORD    CheckSum;               // checksum from the PE header
     DWORD    NumSyms;                // number of symbols in the symbol table
     SYM_TYPE SymType;                // type of symbols loaded
     WCHAR    ModuleName[32];         // module name
@@ -1308,8 +1308,8 @@ typedef struct _IMAGEHLP_MODULE
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_MODULE)
     DWORD    BaseOfImage;            // base load address of module
     DWORD    ImageSize;              // virtual size of the loaded module
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
-    DWORD    CheckSum;               // checksum from the pe header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
+    DWORD    CheckSum;               // checksum from the PE header
     DWORD    NumSyms;                // number of symbols in the symbol table
     SYM_TYPE SymType;                // type of symbols loaded
     CHAR     ModuleName[32];         // module name
@@ -1322,8 +1322,8 @@ typedef struct _IMAGEHLP_MODULEW
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_MODULE)
     DWORD    BaseOfImage;            // base load address of module
     DWORD    ImageSize;              // virtual size of the loaded module
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
-    DWORD    CheckSum;               // checksum from the pe header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
+    DWORD    CheckSum;               // checksum from the PE header
     DWORD    NumSyms;                // number of symbols in the symbol table
     SYM_TYPE SymType;                // type of symbols loaded
     WCHAR    ModuleName[32];         // module name
@@ -1452,8 +1452,8 @@ typedef struct _IMAGEHLP_DEFERRED_SYMBOL_LOAD64
 {
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOAD64)
     DWORD64  BaseOfImage;            // base load address of module
-    DWORD    CheckSum;               // checksum from the pe header
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
+    DWORD    CheckSum;               // checksum from the PE header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
     CHAR     FileName[MAX_PATH];     // symbols file or image name
     BOOLEAN  Reparse;                // load failure reparse
     HANDLE   hFile;                  // file handle, if passed
@@ -1464,8 +1464,8 @@ typedef struct _IMAGEHLP_DEFERRED_SYMBOL_LOADW64
 {
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64)
     DWORD64  BaseOfImage;            // base load address of module
-    DWORD    CheckSum;               // checksum from the pe header
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
+    DWORD    CheckSum;               // checksum from the PE header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
     WCHAR    FileName[MAX_PATH + 1]; // symbols file or image name
     BOOLEAN  Reparse;                // load failure reparse
     HANDLE   hFile;                  // file handle, if passed
@@ -1483,8 +1483,8 @@ typedef struct _IMAGEHLP_DEFERRED_SYMBOL_LOAD
 {
     DWORD    SizeOfStruct;           // set to sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOAD)
     DWORD    BaseOfImage;            // base load address of module
-    DWORD    CheckSum;               // checksum from the pe header
-    DWORD    TimeDateStamp;          // date/time stamp from pe header
+    DWORD    CheckSum;               // checksum from the PE header
+    DWORD    TimeDateStamp;          // date/time stamp from PE header
     CHAR     FileName[MAX_PATH];     // symbols file or image name
     BOOLEAN  Reparse;                // load failure reparse
     HANDLE   hFile;                  // file handle, if passed

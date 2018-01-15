@@ -1,4 +1,4 @@
-#include "ow_imports.h"
+#include "wow_imports.h"
 
 #include <string>
 #include <vector>
@@ -15,7 +15,7 @@ static SIZE_T GetImportAddressTable(const REMOTE_PE_HEADER& HeaderData)
     return rdata != nullptr ? HeaderData.remoteBaseAddress + rdata->VirtualAddress : 0;
 }
 
-owimports::ImportUnpacker::~ImportUnpacker()
+wow_imports::ImportUnpacker::~ImportUnpacker()
 {
     if (hCapstone) {
         cs_close(&hCapstone);
@@ -23,7 +23,7 @@ owimports::ImportUnpacker::~ImportUnpacker()
     }
 }
 
-bool owimports::ImportUnpacker::initialize()
+bool wow_imports::ImportUnpacker::initialize()
 {
     if (cs_open(CS_ARCH_X86, CS_MODE_64, &hCapstone) != CS_ERR_OK)
         return false;
@@ -33,7 +33,7 @@ bool owimports::ImportUnpacker::initialize()
     return true;
 }
 
-SIZE_T owimports::ImportUnpacker::resolve(size_t ThunkBase)
+SIZE_T wow_imports::ImportUnpacker::resolve(size_t ThunkBase)
 {
     const SIZE_T regionBase = memory::util::AlignToAllocationGranularity(ThunkBase);
     const SIZE_T blockSize = 0x60;
@@ -57,7 +57,7 @@ SIZE_T owimports::ImportUnpacker::resolve(size_t ThunkBase)
     return import;
 }
 
-bool owimports::ImportUnpacker::resolveBlock(const unsigned char * CodeBuf, SIZE_T CodeSize, SIZE_T & EA, SIZE_T & Import)
+bool wow_imports::ImportUnpacker::resolveBlock(const unsigned char * CodeBuf, SIZE_T CodeSize, SIZE_T & EA, SIZE_T & Import)
 {
     while (cs_disasm_iter(hCapstone, &CodeBuf, &CodeSize, &EA, insn)) {
         switch (insn->id)
@@ -105,7 +105,7 @@ bool owimports::ImportUnpacker::resolveBlock(const unsigned char * CodeBuf, SIZE
     return false;
 }
 
-bool owimports::RebuildImports(const REMOTE_PE_HEADER& HeaderData)
+bool wow_imports::RebuildImports(const REMOTE_PE_HEADER& HeaderData)
 {
     ImportUnpacker unpacker;
     if (!unpacker.initialize()) {

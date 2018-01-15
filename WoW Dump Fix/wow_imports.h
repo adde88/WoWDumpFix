@@ -7,7 +7,7 @@
 typedef size_t csh;
 struct cs_insn;
 
-namespace owimports {
+namespace wow_imports {
 
 // 3.6.2017: imports are spread across several 0x1000 byte regions and the thunks
 // now contain jumps to inside the region. This now uses capstone disassembler to
@@ -42,4 +42,4 @@ private:
 // address.
 bool RebuildImports(const REMOTE_PE_HEADER& HeaderData);
 
-} // namespace owimports
+} // namespace wow_imports

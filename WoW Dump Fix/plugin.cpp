@@ -5,27 +5,27 @@
 Debuggee debuggee;
 
 // Plugin exported command.
-static const char cmdOverwatchDumpFix[] = "OverwatchDumpFix";
-// Overwatch.exe version this plugin is developed for.
-static const char overwatchTargetVersion[] = "1.11.1.2.36859";
+static const char cmdWoWDumpFix[] = "WoWDumpFix";
+// WoW-64.exe version this plugin is developed for.
+static const char WoWTargetVersion[] = "7.3.2.25549";
 
 static const char realPluginVersion[] = "v5.0.0";
-static const char authorName[] = "changeofpace";
-static const char githubSourceURL[] = R"(https://github.com/changeofpace/Overwatch-Dump-Fix)";
+static const char authorName[] = "changeofpace (WoW mod by Zylla)";
+static const char githubSourceURL[] = R"(https://github.com/adde88/WoW-Dump-Fix)";
 
 ///////////////////////////////////////////////////////////////////////////////
 // Added Commands
 
-static bool cbOverwatchDumpFix(int argc, char* argv[])
+static bool cbWoWDumpFix(int argc, char* argv[])
 {
     pluginLog("Executing %s %s.\n", PLUGIN_NAME, realPluginVersion);
-    pluginLog("This plugin is updated for Overwatch version %s.\n", overwatchTargetVersion);
-    if (!fixdump::current::FixOverwatch()) {
-        pluginLog("Failed to complete. Open an issue on github with the error message and log output:\n");
+    pluginLog("This plugin is updated for World of Warcraft version %s.\n", WoWTargetVersion);
+    if (!fixdump::current::FixWoW()) {
+        pluginLog("Failed to complete. Open an issue on GitHub with the error message(s) and log output:\n");
         pluginLog("    %s\n", githubSourceURL);
         return false;
     }
-    pluginLog("Completed successfully. Use Scylla to dump Overwatch.exe.\n");
+    pluginLog("Completed successfully! Use Scylla to dump WoW-64.exe.\n");
     return true;
 }
 
@@ -34,9 +34,9 @@ static bool cbOverwatchDumpFix(int argc, char* argv[])
 
 PLUG_EXPORT void CBCREATEPROCESS(CBTYPE cbType, PLUG_CB_CREATEPROCESS* Info)
 {
-    static const char overwatchModuleName[] = "Overwatch";
+    static const char WoWModuleName[] = "Wow-64";
 
-    if (!strcmp(Info->modInfo->ModuleName, overwatchModuleName)) {
+    if (!strcmp(Info->modInfo->ModuleName, WoWModuleName)) {
         debuggee = Debuggee{Info->fdProcessInfo->hProcess,
                             Info->modInfo->BaseOfImage,
                             Info->modInfo->ImageSize};
@@ -56,9 +56,9 @@ PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     {
     case PLUGIN_MENU_ABOUT: {
         const int maxMessageBoxStringSize = 1024;
-        char buf[maxMessageBoxStringSize] = "";
+		char buf[maxMessageBoxStringSize] = "";
 
-        _snprintf_s(buf, maxMessageBoxStringSize, _TRUNCATE,
+		_snprintf_s(buf, maxMessageBoxStringSize, _TRUNCATE,
                     "Author:  %s.\n\nsource code:  %s.",
                     authorName, githubSourceURL);
 
@@ -70,8 +70,8 @@ PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 
 bool pluginInit(PLUG_INITSTRUCT* initStruct)
 {
-    if (!_plugin_registercommand(pluginHandle, cmdOverwatchDumpFix, cbOverwatchDumpFix, true)) {
-        pluginLog("failed to register command %s.\n", cmdOverwatchDumpFix);
+    if (!_plugin_registercommand(pluginHandle, cmdWoWDumpFix, cbWoWDumpFix, true)) {
+        pluginLog("failed to register command %s.\n", cmdWoWDumpFix);
         return false;
     }
     return true;
@@ -80,7 +80,7 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
 bool pluginStop()
 {
     _plugin_menuclear(hMenu);
-    _plugin_unregistercommand(pluginHandle, cmdOverwatchDumpFix);
+    _plugin_unregistercommand(pluginHandle, cmdWoWDumpFix);
     return true;
 }
 

@@ -7,13 +7,13 @@
 
 #include "memory.h"
 #include "nt.h"
-#include "ow_imports.h"
+#include "wow_imports.h"
 
-bool fixdump::current::FixOverwatch()
+bool fixdump::current::FixWoW()
 {
     BUFFERED_PE_HEADER peHeader;
-    if (!GetOverwatchPeHeader(peHeader)) {
-        pluginLog("Error: failed to get Overwatch's PE header.\n");
+    if (!GetWoWPeHeader(peHeader)) {
+        pluginLog("Error: failed to get World of Warcraft's PE header.\n");
         return false;
     }
 
@@ -30,7 +30,7 @@ bool fixdump::current::FixOverwatch()
                   view_info.RegionSize, view_info.Protect);
     }
 
-    // Make overwatch's pe header, .text, and .rdata regions writable.
+    // Make Wrld of Warcraft's PE header, .text, and .rdata regions writable.
     if (!memory::RemapViewOfSection(size_t(memoryViews[0].BaseAddress),
                                     memoryViews[0].RegionSize)) {
         pluginLog("Error: failed to remap view at %p (%llX).\n",
@@ -51,20 +51,20 @@ bool fixdump::current::FixOverwatch()
         return false;
     }
 
-    if (!owimports::RebuildImports(restoredPeHeader)) {
+    if (!wow_imports::RebuildImports(restoredPeHeader)) {
         pluginLog("Error: failed to rebuild imports.\n");
         return false;
     }
 
     if (!SplitSections(restoredPeHeader)) {
-        pluginLog("Error: failed to split pe sections.\n");
+        pluginLog("Error: failed to split PE sections.\n");
         return false;
     }
 
     return true;
 }
 
-//bool fixdump::current::GetOverwatchPeHeader(BUFFERED_PE_HEADER& PeHeader) {
+//bool fixdump::current::GetWoWPeHeader(BUFFERED_PE_HEADER& PeHeader) {
 //    std::ifstream in(debuggee.image_name, std::ios::binary);
 //    if (!in.is_open())
 //        return false;
@@ -73,48 +73,48 @@ bool fixdump::current::FixOverwatch()
 //    return in && FillBufferedPeHeader(buffer, PE_HEADER_SIZE, PeHeader);
 //}
 
-bool fixdump::current::GetOverwatchPeHeader(BUFFERED_PE_HEADER& PeHeader)
+bool fixdump::current::GetWoWPeHeader(BUFFERED_PE_HEADER& PeHeader)
 {
-    wchar_t overwatchPath[MAX_MODULE_SIZE] = {};
+    wchar_t WoWPath[MAX_MODULE_SIZE] = {};
     if (!GetModuleFileNameExW(debuggee.hProcess,
                               nullptr,
-                              overwatchPath,
+                              WoWPath,
                               MAX_MODULE_SIZE)) {
-        pluginLog("Error: failed to get Overwatch's path.\n");
+        pluginLog("Error: failed to get World of Warcraft's path.\n");
         return false;
     }
 
-    HANDLE hOverwatchFile = CreateFileW(overwatchPath,
+    HANDLE hWoWFile = CreateFileW(WoWPath,
                                         GENERIC_READ,
                                         FILE_SHARE_READ,
                                         nullptr,
                                         OPEN_EXISTING,
                                         FILE_ATTRIBUTE_NORMAL,
                                         nullptr);
-    if (hOverwatchFile == INVALID_HANDLE_VALUE) {
-        pluginLog("Error: failed to open Overwatch.exe while getting pe header.\n");
+    if (hWoWFile == INVALID_HANDLE_VALUE) {
+        pluginLog("Error: failed to open WoW-64.exe while getting PE header.\n");
         return false;
     }
 
     DWORD numBytesRead = 0;
-    if (!ReadFile(hOverwatchFile,
+    if (!ReadFile(hWoWFile,
                   LPVOID(PeHeader.rawData),
                   PE_HEADER_SIZE,
                   &numBytesRead,
                   nullptr)) {
-        pluginLog("Error: failed to read Overwatch.exe.\n");
-        CloseHandle(hOverwatchFile);
+        pluginLog("Error: failed to read WoW-64.exe.\n");
+        CloseHandle(hWoWFile);
         return false;
     }
 
-    // HACK 4.29.2017: pe header code needs a rewrite and so does this.
+    // HACK 4.29.2017: PE header code needs a rewrite and so does this.
     if (!FillPeHeader(SIZE_T(PeHeader.rawData), PeHeader)) {
-        pluginLog("Error: failed to create pe header from read buffer.\n");
-        CloseHandle(hOverwatchFile);
+        pluginLog("Error: failed to create PE header from read buffer.\n");
+        CloseHandle(hWoWFile);
         return false;
     }
 
-    CloseHandle(hOverwatchFile);
+    CloseHandle(hWoWFile);
     return true;
 }
 
@@ -203,7 +203,7 @@ SIZE_T GetSecretPEHeaderBaseAddress() {
             BYTE data[PE_HEADER_SIZE] = {};
             if (!memory::util::RemoteRead(SIZE_T(mbi.BaseAddress), data, PE_HEADER_SIZE))
             {
-                pluginLog("RemoteRead failed for %p while scanning for secret pe header.\n", ea);
+                pluginLog("RemoteRead failed for %p while scanning for secret PE header.\n", ea);
                 return 0;
             }
 
@@ -269,49 +269,49 @@ void RestoreSectionProtections(const REMOTE_PE_HEADER& PeHeader)
     restoreProtection(PVOID(PeHeader.optionalHeader->ImageBase), PE_HEADER_SIZE, PAGE_READONLY);
 }
 
-SIZE_T BuildNewOverwatchRegion(const REMOTE_PE_HEADER& OverwatchPEHeader)
+SIZE_T BuildNewWoWRegion(const REMOTE_PE_HEADER& WoWPEHeader)
 {
-    LPVOID newOverwatchRegion = VirtualAllocEx(debuggee.hProcess,
+    LPVOID newWoWRegion = VirtualAllocEx(debuggee.hProcess,
                                                NULL,
-                                               OverwatchPEHeader.optionalHeader->SizeOfImage,
+                                               WoWPEHeader.optionalHeader->SizeOfImage,
                                                MEM_COMMIT | MEM_RESERVE,
                                                PAGE_EXECUTE_READWRITE);
-    if (!newOverwatchRegion)
+    if (!newWoWRegion)
     {
-        pluginLog("BuildNewOverwatchRegion: VirtualAllocEx failed %d.\n", GetLastError());
+        pluginLog("BuildNewWoWRegion: VirtualAllocEx failed %d.\n", GetLastError());
         return 0;
     }
 
     LPVOID transferBuffer = VirtualAlloc(NULL,
-                                         OverwatchPEHeader.optionalHeader->SizeOfImage,
+                                         WoWPEHeader.optionalHeader->SizeOfImage,
                                          MEM_COMMIT | MEM_RESERVE,
                                          PAGE_EXECUTE_READWRITE);
     if (!transferBuffer)
     {
-        pluginLog("BuildNewOverwatchRegion: VirtualAlloc failed %d.\n", GetLastError());
+        pluginLog("BuildNewWoWRegion: VirtualAlloc failed %d.\n", GetLastError());
         return 0;
     }
 
     if (const SIZE_T secretPEHeaderAddress = GetSecretPEHeaderBaseAddress())
     {
-        if (memory::util::RemoteRead(OverwatchPEHeader.remoteBaseAddress,
+        if (memory::util::RemoteRead(WoWPEHeader.remoteBaseAddress,
                                 transferBuffer,
-                                OverwatchPEHeader.optionalHeader->SizeOfImage) &&
+                                WoWPEHeader.optionalHeader->SizeOfImage) &&
             memory::util::RemoteRead(secretPEHeaderAddress, transferBuffer, PE_HEADER_SIZE) &&
-            memory::util::RemoteWrite(SIZE_T(newOverwatchRegion),
+            memory::util::RemoteWrite(SIZE_T(newWoWRegion),
                                  transferBuffer,
-                                 OverwatchPEHeader.optionalHeader->SizeOfImage))
+                                 WoWPEHeader.optionalHeader->SizeOfImage))
         {
             VirtualFree(transferBuffer, 0, MEM_RELEASE);
-            return SIZE_T(newOverwatchRegion);
+            return SIZE_T(newWoWRegion);
         }
         else
-            pluginLog("BuildNewOverwatchRegion: Failed to write transfer buffer to Overwatch.exe.\n");
+            pluginLog("BuildNewWoWRegion: Failed to write transfer buffer to WoW-64.exe.\n");
     }
     else
-        pluginLog("BuildNewOverwatchRegion: GetSecretPEHeaderBaseAddress failed.\n");
+        pluginLog("BuildNewWoWRegion: GetSecretPEHeaderBaseAddress failed.\n");
 
-    VirtualFreeEx(debuggee.hProcess,newOverwatchRegion, 0, MEM_RELEASE);
+    VirtualFreeEx(debuggee.hProcess,newWoWRegion, 0, MEM_RELEASE);
     VirtualFree(transferBuffer, 0, MEM_RELEASE);
     return 0;
 }
@@ -340,7 +340,7 @@ bool NoticeMeScylla(const REMOTE_PE_HEADER& NewRegionPEHeader)
     SIZE_T ldr = 0;
     SIZE_T listHeadAddress = 0;
     SIZE_T listHeadFlink = 0;
-    SIZE_T overwatchEntryAddress = 0;
+    SIZE_T WoWEntryAddress = 0;
     LIST_ENTRY newEntry = {};
     LIST_ENTRY listHead = {};
     LDR_DATA_TABLE_ENTRY localModuleEntry = {};
@@ -350,10 +350,10 @@ bool NoticeMeScylla(const REMOTE_PE_HEADER& NewRegionPEHeader)
     listHeadAddress = ldr + FIELD_OFFSET(PEB_LDR_DATA, InMemoryOrderModuleList);
     memory::util::RemoteRead(listHeadAddress, &listHead, sizeof(LIST_ENTRY));
 
-    // read Overwatch.exe's LDR_DATA_TABLE_ENTRY.
+    // read WoW-64.exe's LDR_DATA_TABLE_ENTRY.
     memory::util::RemoteRead(listHeadAddress, &listHeadFlink, sizeof(SIZE_T));
-    overwatchEntryAddress = listHeadFlink - FIELD_OFFSET(LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
-    memory::util::RemoteRead(overwatchEntryAddress, &localModuleEntry, sizeof(localModuleEntry));
+    WoWEntryAddress = listHeadFlink - FIELD_OFFSET(LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
+    memory::util::RemoteRead(WoWEntryAddress, &localModuleEntry, sizeof(localModuleEntry));
 
     // insert the new entry at the tail of InMemoryOrderModuleList.
 

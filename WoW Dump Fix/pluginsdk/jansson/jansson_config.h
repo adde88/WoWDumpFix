@@ -30,7 +30,7 @@
 /* #undef HAVE_INTTYPES_H */
 /* #undef HAVE_SYS_TYPES_H */
 
-/* Include our standard type header for the integer typedef */
+/* Include our standard tyPE header for the integer typedef */
 
 #if defined(HAVE_STDINT_H)
 #  include <stdint.h>

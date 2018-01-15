@@ -4,7 +4,7 @@
 
 #include "pluginmain.h"
 
-#define PLUGIN_NAME "Overwatch Dump Fix"
+#define PLUGIN_NAME "World of Warcraft Dump Fix"
 #define PLUGIN_VERSION 5
 
 #define plog(Format, ...) _plugin_logprintf(Format, __VA_ARGS__)
