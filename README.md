@@ -1,4 +1,7 @@
-# WoWDumpFix - (Fork of Overwatch-Dump-Fix, tweaked for WoW)
+# WoWDumpFix
+#### (Fork of Overwatch-Dump-Fix. Tweaked for WoW)
+------
+
 
 This x64dbg plugin removes anti-dumping and obfuscation techniques from the popular MMORPG game World of Warcraft. It is meant to be used with Scylla (built into x64dbg) to produce process dump files for static analysis.
 
