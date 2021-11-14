@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # work in progress, do not use on an .idb without backing it up.
 
 # there are several unreferenced strings in IDA of the format \btext\b.

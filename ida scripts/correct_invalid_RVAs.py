@@ -1,9 +1,11 @@
+#!/usr/bin/python3
+
 # No longer necessary with release v2.0.
 #
-# This script corrects invalid RVAs by rebasing the .idb to World of Warcraft's imagebase.
+# This script corrects invalid RVAs by rebasing the .idb to WoW's imagebase.
 # See plugin output:
-#   [World of Warcraft Dump Fix] IDA Pro Info:
-#   [World of Warcraft Dump Fix]     wow base address = 000000013F790000
+#   [WoWDumpFix] IDA Pro Info:
+#   [WoWDumpFix] WoW base address = 000000013F790000
 
 
 import idc
@@ -11,7 +13,7 @@ import idaapi
 
 
 def main():
-    wow_imagebase = idc.AskAddr(idc.BADADDR, "Enter WoW-64.exe's base address.")
+    wow_imagebase = idc.AskAddr(idc.BADADDR, "Enter WoW's base address.")
     if wow_imagebase and wow_imagebase is not idc.BADADDR:
         delta = wow_imagebase - idaapi.get_imagebase()
         status = rebase_program(delta, idc.MSF_NOFIX)

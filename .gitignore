@@ -9,7 +9,6 @@
 *.jpg
 *.json
 *.lastbuildstate
-*.lib
 *.log
 *.metagen
 *.obj
@@ -24,6 +23,12 @@
 *.tlog
 *.user
 *.zip
+*.tlog
+*.lastbuildstate
+*.dp64
+*.dp32
+*.dll
+*.exe
+*.recipe
 
 .vs/*
-bin/*
